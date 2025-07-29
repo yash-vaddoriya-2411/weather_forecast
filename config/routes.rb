@@ -13,5 +13,4 @@ Rails.application.routes.draw do
   get  "/check_weather", to: "forecasts#check_weather", as: :check_weather
   post "/check_weather", to: "forecasts#check_weather"
   root to: redirect("/check_weather")
-
 end
