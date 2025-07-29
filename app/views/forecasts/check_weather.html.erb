@@ -11,6 +11,9 @@
 </div>
 
 <% if @forecast %>
+  <% if @from_cache %>
+    <span style="color: green;">(Result from cache)</span>
+  <% end %>
   <div class="forecast-results">
     <h2>Weather for <%= @address %></h2>
     <div class="forecast-details">

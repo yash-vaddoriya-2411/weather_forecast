@@ -1,13 +1,55 @@
 class ForecastsController < ApplicationController
   def check_weather
     @address = params[:address] || ""
-    # if request post then only get coordinates
-    if request.post? && !@address.blank?
-      # calling service for coordinates like latitude, longitude, zip_code
+
+    # If request post then only get coordinates
+    if request.post?
+      # Check for if address not blank
+      if @address.blank?
+        flash[:alert] = "Address not provided or can't be blank"
+        redirect_to root_path and return
+      end
+
+      # Calling service for coordinates like latitude, longitude, zip_code
       coordinates = GeocodingService.new(@address).coordinates
 
-      # call open weather api using service
-      @forecast = WeatherService.new(coordinates[:lat], coordinates[:lng]).fetch
+      # Extract zip code from coordinates
+      @zip_code = coordinates[:zip_code]
+
+      # Generate cache key using zip code but if it is not available then using latitude and longitude
+      cache_key = if @zip_code.present?
+                    "forecast_#{@zip_code}"
+      else
+                    "forecast_#{coordinates[:lat]}_#{coordinates[:lng]}"
+      end
+
+      # Read from cache if above key already present
+      @forecast = Rails.cache.read(cache_key)
+
+      if @forecast.present?
+        # Variable declaration to show on front end that data retrieve from cache
+        @from_cache = true
+        flash.now[:notice] = "Weather data retrieved from cache for #{@zip_code}."
+      else
+        begin
+          # Call open weather api using service
+          @forecast = WeatherService.new(coordinates[:lat], coordinates[:lng]).fetch
+
+          if @forecast.present?
+            # Store data in cache for future usage
+            Rails.cache.write(cache_key, @forecast, expires_in: 30.minutes)
+            flash.now[:notice] = "Weather data fetched successfully for #{@zip_code}."
+          else
+            flash.now[:alert] = "Could not fetch weather data."
+          end
+          @from_cache = false
+          # Rescue error
+        rescue => e
+          Rails.logger.error("WeatherService Error: #{e.message}")
+          flash.now[:alert] = "Failed to retrieve weather data. Please try again."
+          @forecast = nil
+        end
+      end
     end
   end
 end
