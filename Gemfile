@@ -52,6 +52,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+gem "importmap-rails"
 
 gem "httparty", "~> 0.23.1"
 

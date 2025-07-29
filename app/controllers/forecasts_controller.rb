@@ -14,7 +14,7 @@ class ForecastsController < ApplicationController
       coordinates = GeocodingService.new(@address).coordinates
 
       # Extract zip code from coordinates
-      @zip_code = coordinates[:zip_code]
+      @zip_code = coordinates[:zip_code] if coordinates[:zip_code].present?
 
       # Generate cache key using zip code but if it is not available then using latitude and longitude
       cache_key = if @zip_code.present?
@@ -27,18 +27,16 @@ class ForecastsController < ApplicationController
       @forecast = Rails.cache.read(cache_key)
 
       if @forecast.present?
-        # Variable declaration to show on front end that data retrieve from cache
         @from_cache = true
-        flash.now[:notice] = "Weather data retrieved from cache for #{@zip_code}."
+        flash.now[:notice] = "Weather data retrieved from cache for #{@address}."
       else
         begin
-          # Call open weather api using service
           @forecast = WeatherService.new(coordinates[:lat], coordinates[:lng]).fetch
 
           if @forecast.present?
             # Store data in cache for future usage
             Rails.cache.write(cache_key, @forecast, expires_in: 30.minutes)
-            flash.now[:notice] = "Weather data fetched successfully for #{@zip_code}."
+            flash.now[:notice] = "Weather data fetched successfully for #{@address}."
           else
             flash.now[:alert] = "Could not fetch weather data."
           end

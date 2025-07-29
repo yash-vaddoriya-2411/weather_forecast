@@ -13,7 +13,7 @@ class WeatherService
       lat: @lat,
       lon: @lon,
       units: "metric",
-      appid: Rails.application.credentials.dig(:weather_api),
+      appid: Rails.application.credentials.dig(:weather_api)
     })
 
     data = response.parsed_response

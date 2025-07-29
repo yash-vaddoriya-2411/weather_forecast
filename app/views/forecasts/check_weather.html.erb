@@ -1,38 +1,80 @@
-<div>
-  <h1>Weather Forecast</h1>
-  
-  <%= form_with url: check_weather_path, method: :post, local: true do |f| %>
-    <div>
-      <%= label_tag :address, "Enter Location:" %>
-      <%= text_field_tag :address, @address, placeholder: "Enter city, state, or address"%>
-    </div>
-    <%= submit_tag "Get Weather Forecast"%>
-  <% end %>
-</div>
+<%= stylesheet_link_tag "spinner", media: "all" %>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+          <h1 class="card-title text-center mb-4 text-primary display-5">Live Weather Forecast</h1>
+          <% if flash[:alert] %>
+            <div class="alert alert-danger mt-3 rounded-3 shadow-sm"><%= flash[:alert] %></div>
+          <% elsif flash[:notice] %>
+            <div class="alert alert-success mt-3 rounded-3 shadow-sm"><%= flash[:notice] %></div>
+          <% end %>
+          <%= form_with url: check_weather_path, method: :post, local: true do %>
+            <div class="mb-3">
+              <%= label_tag :address, "Search by Location", class: "form-label fw-semibold" %>
+              <%= text_field_tag :address, @address, placeholder: "E.g. New York, USA", class: "form-control form-control-lg rounded-3 shadow-sm" %>
+            </div>
+            <div class="d-grid position-relative">
+              <%= submit_tag "Get Forecast", class: "btn btn-lg btn-primary rounded-3 fw-bold shadow-sm pe-5", id: "submit-btn" %>
+              <div id="custom-spinner" class="custom-spinner d-none position-absolute top-50 end-0 translate-middle-y me-4">
+                <div class="dual-ring"></div>
+              </div>
+            </div>
+        <% end %>
 
-<% if @forecast %>
-  <% if @from_cache %>
-    <span style="color: green;">(Result from cache)</span>
-  <% end %>
-  <div class="forecast-results">
-    <h2>Weather for <%= @address %></h2>
-    <div class="forecast-details">
-      <div class="forecast-item">
-        <span class="label">Current Temperature:</span>
-        <span class="value"><%= @forecast[:curr_temp] %></span>
-      </div>
-      <div class="forecast-item">
-        <span class="label">Max Temperature:</span>
-        <span class="value"><%= @forecast[:temp_max] %></span>
-      </div>
-      <div class="forecast-item">
-        <span class="label">Min Temperature:</span>
-        <span class="value"><%= @forecast[:temp_min] %></span>
-      </div>
-      <div class="forecast-item">
-        <span class="label">Description:</span>
-        <span class="value">Today, Weather with <%= @forecast[:description] %></span>
+          <% if @forecast %>
+            <div class="mt-5">
+              <% if @from_cache %>
+                <div class="text-end">
+                  <span class="badge bg-success">Cached Result</span>
+                </div>
+              <% end %>
+
+              <div class="card bg-light rounded-4 shadow-sm mt-3">
+                <div class="card-body px-4 py-5">
+                  <h4 class="text-center text-secondary mb-5">Weather for <strong><%= @address %></strong></h4>
+
+                  <div class="row text-center g-4">
+                    <div class="col-md-6">
+                      <div class="bg-white p-4 rounded-3 shadow-sm h-100">
+                        <h6 class="text-muted">Current Temperature</h6>
+                        <p class="display-6 fw-bold text-primary mb-0"><%= @forecast[:curr_temp] %>°C</p>
+                        <small class="text-muted">As of now</small>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="bg-white p-4 rounded-3 shadow-sm h-100">
+                        <h6 class="text-muted">Weather Summary</h6>
+                        <p class="fs-5 fw-semibold mb-0">Today, <%= @forecast[:description].capitalize %></p>
+                        <small class="text-muted">From OpenWeather</small>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="bg-white p-4 rounded-3 shadow-sm h-100">
+                        <h6 class="text-muted">High Temperature</h6>
+                        <p class="fs-4 text-danger fw-semibold mb-0"><%= @forecast[:temp_max] %>°C</p>
+                        <small class="text-muted">Maximum today</small>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="bg-white p-4 rounded-3 shadow-sm h-100">
+                        <h6 class="text-muted">Low Temperature</h6>
+                        <p class="fs-4 text-info fw-semibold mb-0"><%= @forecast[:temp_min] %>°C</p>
+                        <small class="text-muted">Minimum today</small>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
-<% end %>
+</div>
