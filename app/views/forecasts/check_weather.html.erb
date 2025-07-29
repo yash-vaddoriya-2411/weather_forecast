@@ -1,0 +1,11 @@
+<div>
+  <h1>Weather Forecast</h1>
+  
+  <%= form_with url: check_weather_path, method: :post, local: true do |f| %>
+    <div>
+      <%= label_tag :address, "Enter Location:" %>
+      <%= text_field_tag :address, @address, placeholder: "Enter city, state, or address"%>
+    </div>
+    <%= submit_tag "Get Weather Forecast"%>
+  <% end %>
+</div> 
