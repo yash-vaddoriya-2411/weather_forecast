@@ -1,3 +1,4 @@
+<%= stylesheet_link_tag "spinner", media: "all" %>
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
@@ -14,10 +15,13 @@
               <%= label_tag :address, "Search by Location", class: "form-label fw-semibold" %>
               <%= text_field_tag :address, @address, placeholder: "E.g. New York, USA", class: "form-control form-control-lg rounded-3 shadow-sm" %>
             </div>
-            <div class="d-grid">
-              <%= submit_tag "Get Forecast", class: "btn btn-lg btn-primary rounded-3 fw-bold shadow-sm" %>
+            <div class="d-grid position-relative">
+              <%= submit_tag "Get Forecast", class: "btn btn-lg btn-primary rounded-3 fw-bold shadow-sm pe-5", id: "submit-btn" %>
+              <div id="custom-spinner" class="custom-spinner d-none position-absolute top-50 end-0 translate-middle-y me-4">
+                <div class="dual-ring"></div>
+              </div>
             </div>
-          <% end %>
+        <% end %>
 
           <% if @forecast %>
             <div class="mt-5">

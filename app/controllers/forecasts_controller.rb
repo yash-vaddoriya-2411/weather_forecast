@@ -28,7 +28,7 @@ class ForecastsController < ApplicationController
 
       if @forecast.present?
         @from_cache = true
-        flash.now[:notice] = "Weather data retrieved from cache for #{@zip_code}."
+        flash.now[:notice] = "Weather data retrieved from cache for #{@address}."
       else
         begin
           @forecast = WeatherService.new(coordinates[:lat], coordinates[:lng]).fetch
@@ -36,7 +36,7 @@ class ForecastsController < ApplicationController
           if @forecast.present?
             # Store data in cache for future usage
             Rails.cache.write(cache_key, @forecast, expires_in: 30.minutes)
-            flash.now[:notice] = "Weather data fetched successfully for #{@zip_code}."
+            flash.now[:notice] = "Weather data fetched successfully for #{@address}."
           else
             flash.now[:alert] = "Could not fetch weather data."
           end
