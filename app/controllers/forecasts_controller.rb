@@ -13,6 +13,11 @@ class ForecastsController < ApplicationController
       # Calling service for coordinates like latitude, longitude, zip_code
       coordinates = GeocodingService.new(@address).coordinates
 
+      if coordinates.blank?
+        flash[:alert] = "Invalid address. Please enter a valid location."
+        redirect_to root_path and return
+      end
+
       # Extract zip code from coordinates
       @zip_code = coordinates[:zip_code] if coordinates[:zip_code].present?
 
