@@ -1,0 +1,38 @@
+<div>
+  <h1>Weather Forecast</h1>
+  
+  <%= form_with url: check_weather_path, method: :post, local: true do |f| %>
+    <div>
+      <%= label_tag :address, "Enter Location:" %>
+      <%= text_field_tag :address, @address, placeholder: "Enter city, state, or address"%>
+    </div>
+    <%= submit_tag "Get Weather Forecast"%>
+  <% end %>
+</div>
+
+<% if @forecast %>
+  <% if @from_cache %>
+    <span style="color: green;">(Result from cache)</span>
+  <% end %>
+  <div class="forecast-results">
+    <h2>Weather for <%= @address %></h2>
+    <div class="forecast-details">
+      <div class="forecast-item">
+        <span class="label">Current Temperature:</span>
+        <span class="value"><%= @forecast[:curr_temp] %></span>
+      </div>
+      <div class="forecast-item">
+        <span class="label">Max Temperature:</span>
+        <span class="value"><%= @forecast[:temp_max] %></span>
+      </div>
+      <div class="forecast-item">
+        <span class="label">Min Temperature:</span>
+        <span class="value"><%= @forecast[:temp_min] %></span>
+      </div>
+      <div class="forecast-item">
+        <span class="label">Description:</span>
+        <span class="value">Today, Weather with <%= @forecast[:description] %></span>
+      </div>
+    </div>
+  </div>
+<% end %>
