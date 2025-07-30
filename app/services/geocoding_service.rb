@@ -4,16 +4,19 @@ class GeocodingService
   end
 
   def coordinates
+    # Check for if address not blank
+    return {} if @address.blank?
+
     # search coordinates for given address
     results = Geocoder.search(@address)
-    if results.any?
-      result = results.first
-      # return latitude, longitude and zip code for controller
-      {
-        lat: result.latitude,
-        lng: result.longitude,
-        zip_code: result.postal_code
-      }
-    end
+    return {} unless results.any?
+
+    result = results.first
+    # return latitude, longitude and zip code for controller
+    {
+      lat: result.latitude,
+      lng: result.longitude,
+      zip_code: result.postal_code
+    }
   end
 end
