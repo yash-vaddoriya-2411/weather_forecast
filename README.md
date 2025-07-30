@@ -15,7 +15,7 @@ This is a simple weather forecast feature built with Ruby on Rails. Users can en
 |------------------|-------------|
 | Ruby             | 3.2.7       |
 | Rails            | 8.0.2       |
-| Bootstrap (opt)  | 5.3         |
+| Bootstrap        | 5.3         |
 
 ---
 
