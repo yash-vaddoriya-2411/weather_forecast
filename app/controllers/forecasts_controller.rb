@@ -1,58 +1,55 @@
 class ForecastsController < ApplicationController
+  before_action :get_address, only: [ :check_weather ]
+  def index
+    initialize_weather_data
+    render :check_weather
+  end
+
   def check_weather
-    @address = params[:address] || ""
+    service = WeatherForecastService.new(@address)
 
-    # If request post then only get coordinates
-    if request.post?
-      # Check for if address not blank
-      if @address.blank?
-        flash[:alert] = "Address not provided or can't be blank"
-        redirect_to root_path and return
-      end
+    handle_invalid_address and return if service.coordinates.blank?
+    # Get required data from service
+    assign_weather_data(service)
 
-      # Calling service for coordinates like latitude, longitude, zip_code
-      coordinates = GeocodingService.new(@address).coordinates
+    flash.now[:notice] = @from_cache ? "Weather data retrieved from cache for #{@address}." : "Weather data fetched successfully for #{@address}."
 
-      if coordinates.blank?
-        flash[:alert] = "Invalid address. Please enter a valid location."
-        redirect_to root_path and return
-      end
+    rescue => e
+      handle_service_error(e)
+  end
 
-      # Extract zip code from coordinates
-      @zip_code = coordinates[:zip_code] if coordinates[:zip_code].present?
+  private
 
-      # Generate cache key using zip code but if it is not available then using latitude and longitude
-      cache_key = if @zip_code.present?
-                    "forecast_#{@zip_code}"
-      else
-                    "forecast_#{coordinates[:lat]}_#{coordinates[:lng]}"
-      end
+  def initialize_weather_data
+    @address = ""
+    @forecast = nil
+    @zip_code = nil
+    @from_cache = false
+  end
 
-      # Read from cache if above key already present
-      @forecast = Rails.cache.read(cache_key)
+  def handle_invalid_address
+    flash[:alert] = "Invalid address. Please enter a valid location."
+    redirect_to check_weather_path
+  end
 
-      if @forecast.present?
-        @from_cache = true
-        flash.now[:notice] = "Weather data retrieved from cache for #{@address}."
-      else
-        begin
-          @forecast = WeatherService.new(coordinates[:lat], coordinates[:lng]).fetch
+  def assign_weather_data(service)
+    @forecast = service.fetch_forecast
+    @zip_code = service.zip_code
+    @from_cache = service.from_cache?
 
-          if @forecast.present?
-            # Store data in cache for future usage
-            Rails.cache.write(cache_key, @forecast, expires_in: 30.minutes)
-            flash.now[:notice] = "Weather data fetched successfully for #{@address}."
-          else
-            flash.now[:alert] = "Could not fetch weather data."
-          end
-          @from_cache = false
-          # Rescue error
-        rescue => e
-          Rails.logger.error("WeatherService Error: #{e.message}")
-          flash.now[:alert] = "Failed to retrieve weather data. Please try again."
-          @forecast = nil
-        end
-      end
+    unless @forecast.present?
+      flash.now[:alert] = "Could not fetch weather data."
     end
+  end
+
+  def handle_service_error(error)
+    Rails.logger.error("WeatherService Error: #{error.message}")
+    flash.now[:alert] = "Failed to retrieve weather data. Please try again."
+    @forecast = nil
+    render :check_weather
+  end
+
+  def get_address
+    @address = params[:address].strip
   end
 end
