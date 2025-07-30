@@ -1,3 +1,4 @@
+# This class has responsibility to get longitude, latitude etc from address using external api call
 class GeocodingService
   def initialize(address)
     @address = address

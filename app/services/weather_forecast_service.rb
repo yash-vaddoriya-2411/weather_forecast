@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# This class has responsibility for calling both other services and fetch final result
 class WeatherForecastService
   attr_reader :coordinates, :zip_code
 
@@ -20,8 +21,6 @@ class WeatherForecastService
     else
                   "forecast_#{coordinates[:lat]}_#{coordinates[:lng]}"
     end
-
-
     # Read from cache if above key already present
     @forecast = Rails.cache.read(cache_key)
 

@@ -1,3 +1,4 @@
+# This class has responsibility to weather data from external api calls
 class WeatherService
   include HTTParty
   base_uri "api.openweathermap.org/data/2.5"

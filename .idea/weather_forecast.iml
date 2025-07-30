@@ -9,9 +9,6 @@
       </configuration>
     </facet>
   </component>
-  <component name="ModuleRunConfigurationManager">
-    <shared />
-  </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/features" isTestSource="true" />
@@ -65,8 +62,6 @@
     <orderEntry type="library" scope="PROVIDED" name="erb (v5.0.2, rbenv: 3.2.7) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="erubi (v1.13.1, rbenv: 3.2.7) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="et-orbi (v1.2.11, rbenv: 3.2.7) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="factory_bot (v6.5.4, rbenv: 3.2.7) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="factory_bot_rails (v6.5.0, rbenv: 3.2.7) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="fugit (v1.11.1, rbenv: 3.2.7) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="geocoder (v1.8.5, rbenv: 3.2.7) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="globalid (v1.2.1, rbenv: 3.2.7) [gem]" level="application" />
